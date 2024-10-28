@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.LocationManager
@@ -28,12 +29,14 @@ import com.example.weatherforecast.AlertActivity
 import com.example.weatherforecast.FavouriteActivity
 import com.example.weatherforecast.map.view.MapsActivity
 import com.example.weatherforecast.R
-import com.example.weatherforecast.SettingsActivity
+import com.example.weatherforecast.settings.view.SettingsActivity
 import com.example.weatherforecast.db.WeatherLocalDataSource
 import com.example.weatherforecast.db.WeatherLocalDataSourceImp
 import com.example.weatherforecast.home.viewmodel.HomeViewModel
+import com.example.weatherforecast.home.viewmodel.HomeViewModelFactory
 import com.example.weatherforecast.model.Forecast
 import com.example.weatherforecast.model.Repo.Repo
+import com.example.weatherforecast.model.WeatherResponse
 import com.example.weatherforecast.network.RetrofitHelper
 import com.example.weatherforecast.network.WeatherRemoteDataSource
 import com.example.weatherforecast.network.WeatherRemoteDataSourceImp
@@ -81,16 +84,31 @@ class MainActivity : AppCompatActivity() {
     private lateinit var dailyLayoutManager:LinearLayoutManager
     private lateinit var hourlyLayoutManager: LinearLayoutManager
 
+    private lateinit var sharedPref: SharedPreferences
+    private var tempUnit:String=""
+    private var windUnit:String=""
+    private var language:String=""
+    private var units:String=""
+    private var tempUnitTxt:String=""
+    private var windSpeedTxt:String=""
+    private var actualLang:String=""
+    private var apiKey=""
+
 
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         supportActionBar?.title = "Home"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        apiKey="0f121088b1919d00bf3ffec84d4357f9"
+
+        //Init UI
         weatherCity=findViewById(R.id.tv_zone)
         weatherTemp=findViewById(R.id.tv_current_temp)
-        //weathericon=findViewById(R.id.iv_current)
         weatherDes=findViewById(R.id.tv_current_des)
         locationimg=findViewById(R.id.locationimg)
         weatherDateTime=findViewById(R.id.tv_current_time_date)
@@ -102,17 +120,22 @@ class MainActivity : AppCompatActivity() {
         cloudtxt=findViewById(R.id.tv_cloudiness)
         winddirtxt=findViewById(R.id.tv_dir)
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        dailyRecyclerView=findViewById(R.id.rv_daily)
+        hourlyRecyclerView=findViewById(R.id.rv_hourly)
+
+
+        //view model Init
         remoteDataSource=WeatherRemoteDataSourceImp.getInstance(RetrofitHelper.service)
         localDataSource=WeatherLocalDataSourceImp.getInstance()
         repo= Repo.getInstance(remoteDataSource,localDataSource)!!
         homeViewModelFactory = HomeViewModelFactory(repo)
         homeViewModel = ViewModelProvider(this ,homeViewModelFactory ).get(HomeViewModel::class.java)
-        //homeViewModel.getForecast(long,lat,"en","375d11598481406538e244d548560243")
-        dailyRecyclerView=findViewById(R.id.rv_daily)
-        hourlyRecyclerView=findViewById(R.id.rv_hourly)
+
+        //adapters Init
         hourlyAdapter= HourlyAdapter()
         dailyAdapter= DailyAdapter()
+
+        //recycler view Init
         dailyLayoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         hourlyLayoutManager= LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
 
@@ -125,88 +148,27 @@ class MainActivity : AppCompatActivity() {
             layoutManager=hourlyLayoutManager
         }
 
-        // MainActivity.kt
+        //on map clicked listener
         locationimg.setOnClickListener {
             val intent = Intent(this, MapsActivity::class.java)
             startActivityForResult(intent, REQUEST_LOCATION_CODE)
         }
 
-
-
-
-
-
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_LOCATION_CODE && resultCode == Activity.RESULT_OK) {
+
             data?.let {
                 lat = it.getDoubleExtra("LATITUDE", 0.0)
                 long = it.getDoubleExtra("LONGITUDE", 0.0)
                 Log.d("MainActivity", "Selected Location - Lat: $lat, Long: $long")
-                homeViewModel.getWeather(long,lat,"0f121088b1919d00bf3ffec84d4357f9","metric")
-                lifecycleScope.launchWhenStarted {
-                    homeViewModel.weatherList.collect{ weatherResponse->
-                        weatherResponse?.let {
-                            weatherCity.text=weatherResponse.name
-                            weatherTemp.text= weatherResponse.main?.temp?.toInt().toString().plus("°C")
-                            //weathericon.setImageResource(getIconRes(weatherResponse.weather?.get(0)?.icon))
-                            weatherDes.text= weatherResponse.weather?.get(0)?.description
-                            weatherDateTime.text= getCurrentUTCTime(weatherResponse.timezone.toDouble())
-                            windtxt.text= weatherResponse.wind?.speed.toString().plus(" km/h")
-                            humiditytxt.text= weatherResponse.main?.humidity.toString().plus(" %")
-                            pressuretxt.text= weatherResponse.main?.pressure.toString().plus(" mb")
-                            cloudtxt.text= weatherResponse.clouds?.all.toString().plus(" km")
-                            winddirtxt.text= weatherResponse.wind?.gust.toString()
 
-                            Log.d("mainactivity", "onStart: city ${weatherResponse.name} ")
+                fetchAndUpdateData()
 
-                        }
-
-                    }
-                }
-                homeViewModel.get3HourForecast(long,lat,"0f121088b1919d00bf3ffec84d4357f9","metric")
-                lifecycleScope.launchWhenStarted{
-                    homeViewModel.hourlyForecastList.collect{ hourlyResponse->
-                        hourlyResponse?.let { hourly->
-                            if (hourly.isNotEmpty()) {
-                                // Get the first 8 entries if they exist
-                                val hourlyForecast: List<Forecast> = hourly.take(8)
-                                hourlyAdapter.submitList(hourlyForecast)
-                            } else {
-                                // Handle the case where the list is empty
-                                Log.e("MainActivity", "Forecast list is empty")
-                            }
-                        } ?: run {
-                            // Handle the case where forecastResponse is null
-                            Log.e("MainActivity", "Forecast response is null")
-                        }
-                    }
-
-                }
-
-                homeViewModel.getDailyForecast(long,lat,"0f121088b1919d00bf3ffec84d4357f9","metric")
-                lifecycleScope.launchWhenStarted{
-                    homeViewModel.dailyForecastList.collect{ dailyResponse->
-                        dailyResponse?.let { daily->
-                            if (daily.isNotEmpty()) {
-                                // Get the first 8 entries if they exist
-                                val dailyForecast: List<Forecast> = daily.take(8)
-                                dailyAdapter.submitList(dailyForecast)
-                            } else {
-                                // Handle the case where the list is empty
-                                Log.e("MainActivity", "Forecast list is empty")
-                            }
-                        } ?: run {
-                            // Handle the case where forecastResponse is null
-                            Log.e("MainActivity", "Forecast response is null")
-                        }
-                    }
-
-                }
-
-                // Now you can use these coordinates to fetch weather data or update UI
             }
+
         }
     }
 
@@ -237,6 +199,43 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadSettings()
+        checkOnSettings()
+        fetchAndUpdateData()
+    }
+
+    private fun loadSettings() {
+        sharedPref = getSharedPreferences("SettingsSharedPref", MODE_PRIVATE)
+        tempUnit = sharedPref.getString("Temp_Unit", "°C").toString()
+        windUnit = sharedPref.getString("Wind_Unit", "meter").toString()
+        language = sharedPref.getString("Language", "en") ?: "en"
+
+    }
+
+    fun checkOnSettings(){
+        if(language=="Arabic"){
+            actualLang="ar"
+        }else{
+            actualLang="en"
+        }
+        if(tempUnit=="°C"){
+            units="metric"
+            tempUnitTxt=tempUnit
+            windSpeedTxt="miles/hour"
+        }else if(tempUnit=="°F"){
+            units="imperial"
+            tempUnitTxt=tempUnit
+            windSpeedTxt="meter/sec"
+        }else{
+            units="standard"
+            windSpeedTxt="meter/sec"
+            tempUnitTxt=tempUnit
+        }
+    }
+
+
     override fun onStart() {
         super.onStart()
         if(checkPermissions()){
@@ -244,8 +243,6 @@ class MainActivity : AppCompatActivity() {
                 if(long==0.0 && lat==0.0){
                     getFreshLocation()
                 }
-                //homeViewModel.getWeather(long,lat,"0f121088b1919d00bf3ffec84d4357f9")
-
 
             }else{
                 enableLocationServices()
@@ -283,68 +280,7 @@ class MainActivity : AppCompatActivity() {
                     super.onLocationResult(location)
                     long = location.lastLocation?.longitude!!
                     lat = location.lastLocation?.latitude!!
-                    //homeViewModel.getForecast(long, lat, "en","375d11598481406538e244d548560243")
-                    homeViewModel.getWeather(long,lat,"0f121088b1919d00bf3ffec84d4357f9","metric")
-                    lifecycleScope.launchWhenStarted {
-                        homeViewModel.weatherList.collect{ weatherResponse->
-                            weatherResponse?.let {
-                                weatherCity.text=weatherResponse.name
-                                weatherTemp.text= weatherResponse.main?.temp?.toInt().toString().plus("°C")
-                                //weathericon.setImageResource(getIconRes(weatherResponse.weather?.get(0)?.icon))
-                                weatherDes.text= weatherResponse.weather?.get(0)?.description
-                                weatherDateTime.text= getCurrentUTCTime(weatherResponse.timezone.toDouble())
-                                windtxt.text= weatherResponse.wind?.speed.toString().plus(" km/h")
-                                humiditytxt.text= weatherResponse.main?.humidity.toString().plus(" %")
-                                pressuretxt.text= weatherResponse.main?.pressure.toString().plus(" mb")
-                                cloudtxt.text= weatherResponse.clouds?.all.toString().plus(" km")
-                                winddirtxt.text= weatherResponse.wind?.gust.toString()
-
-                                Log.d("mainactivity", "onStart: city ${weatherResponse.name} ")
-
-                            }
-
-                        }
-                    }
-                    homeViewModel.get3HourForecast(long,lat,"0f121088b1919d00bf3ffec84d4357f9","metric")
-                    lifecycleScope.launchWhenStarted{
-                        homeViewModel.hourlyForecastList.collect{ hourlyResponse->
-                            hourlyResponse?.let { hourly->
-                                if (hourly.isNotEmpty()) {
-                                    // Get the first 8 entries if they exist
-                                    val hourlyForecast: List<Forecast> = hourly.take(8)
-                                    hourlyAdapter.submitList(hourlyForecast)
-                                } else {
-                                    // Handle the case where the list is empty
-                                    Log.e("MainActivity", "Forecast list is empty")
-                                }
-                            } ?: run {
-                                    // Handle the case where forecastResponse is null
-                                    Log.e("MainActivity", "Forecast response is null")
-                                }
-                            }
-
-                        }
-
-                    homeViewModel.getDailyForecast(long,lat,"0f121088b1919d00bf3ffec84d4357f9","metric")
-                    lifecycleScope.launchWhenStarted{
-                        homeViewModel.dailyForecastList.collect{ dailyResponse->
-                            dailyResponse?.let { daily->
-                                if (daily.isNotEmpty()) {
-                                    // Get the first 8 entries if they exist
-                                    val dailyForecast: List<Forecast> = daily.take(8)
-                                    dailyAdapter.submitList(dailyForecast)
-                                } else {
-                                    // Handle the case where the list is empty
-                                    Log.e("MainActivity", "Forecast list is empty")
-                                }
-                            } ?: run {
-                                // Handle the case where forecastResponse is null
-                                Log.e("MainActivity", "Forecast response is null")
-                            }
-                        }
-
-                    }
-
+                    fetchAndUpdateData()
                 }
 
             },
@@ -359,23 +295,70 @@ class MainActivity : AppCompatActivity() {
         return loctionManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || loctionManager.isProviderEnabled(
             LocationManager.NETWORK_PROVIDER)
     }
-    fun getIconRes(icon: String?) = when (icon) {
-        "01n" -> R.drawable.ic_01n
-        "01d" -> R.drawable.ic_01d
-        "02n" -> R.drawable.ic_02n
-        "02d" -> R.drawable.ic_02d
-        "03n", "03d" -> R.drawable.ic_03
-        "04n" -> R.drawable.ic_04n
-        "04d" -> R.drawable.ic_04d
-        "09n", "09d" -> R.drawable.ic_09
-        "10n" -> R.drawable.ic_10n
-        "10d" -> R.drawable.ic_10d
-        "11n", "11d" -> R.drawable.ic_11
-        "13n" -> R.drawable.ic_13n
-        "13d" -> R.drawable.ic_13d
-        "50n", "50d" -> R.drawable.ic_50
-        else -> R.drawable.ic_04d
+
+    fun fetchAndUpdateData(){
+        homeViewModel.getWeather(long,lat,apiKey,units,actualLang)
+        lifecycleScope.launchWhenStarted {
+            homeViewModel.weatherList.collect{ weatherResponse->
+                weatherResponse?.let {
+                    updateUI(weatherResponse)
+                }
+
+            }
+        }
+        homeViewModel.get3HourForecast(long,lat,apiKey,units,actualLang)
+        lifecycleScope.launchWhenStarted{
+            homeViewModel.hourlyForecastList.collect{ hourlyResponse->
+                hourlyResponse?.let { hourly->
+                    if (hourly.isNotEmpty()) {
+                        val hourlyForecast: List<Forecast> = hourly.take(8)
+                        hourlyAdapter.submitList(hourlyForecast)
+                    } else {
+                        Log.e("MainActivity", "Forecast list is empty")
+                    }
+                } ?: run {
+                    Log.e("MainActivity", "Forecast response is null")
+                }
+            }
+
+        }
+
+        homeViewModel.getDailyForecast(long,lat,apiKey,units,actualLang)
+        lifecycleScope.launchWhenStarted{
+            homeViewModel.dailyForecastList.collect{ dailyResponse->
+                dailyResponse?.let { daily->
+                    if (daily.isNotEmpty()) {
+                        val dailyForecast: List<Forecast> = daily.take(8)
+                        dailyAdapter.submitList(dailyForecast)
+                    } else {
+                        Log.e("MainActivity", "Forecast list is empty")
+                    }
+                } ?: run {
+                    Log.e("MainActivity", "Forecast response is null")
+                }
+            }
+
+        }
+
     }
+
+    fun updateUI(weatherResponse: WeatherResponse){
+        weatherResponse?.let {
+            weatherCity.text=weatherResponse.name
+            weatherTemp.text= weatherResponse.main?.temp?.toInt().toString().plus(tempUnitTxt)
+            weatherDes.text= weatherResponse.weather?.get(0)?.description
+            weatherDateTime.text= getCurrentUTCTime(weatherResponse.timezone.toDouble())
+            windtxt.text= weatherResponse.wind?.speed.toString().plus(windSpeedTxt)
+            humiditytxt.text= weatherResponse.main?.humidity.toString().plus(" %")
+            pressuretxt.text= weatherResponse.main?.pressure.toString().plus(" mb")
+            cloudtxt.text= weatherResponse.clouds?.all.toString().plus(" km")
+            winddirtxt.text= weatherResponse.wind?.gust.toString()
+
+            Log.d("mainactivity", "onStart: city ${weatherResponse.name} ")
+
+        }
+    }
+
     private fun getCurrentUTCTime(shift: Double): String {
         val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
         calendar.add(Calendar.HOUR_OF_DAY, (shift / 3600).toInt())

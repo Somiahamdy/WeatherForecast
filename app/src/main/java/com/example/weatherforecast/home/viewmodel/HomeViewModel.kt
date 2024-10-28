@@ -25,9 +25,9 @@ class HomeViewModel(var repo:Repo): ViewModel() {
     val _dailyForecastList = MutableStateFlow<List<Forecast>?>(null)
     val dailyForecastList: StateFlow<List<Forecast>?> = _dailyForecastList
 
-    fun getWeather(long: Double, lat: Double, appid: String, units: String) {
+    fun getWeather(long: Double, lat: Double, appid: String, units: String,lang:String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val weather = repo.getWeather(long, lat, appid, units).collect { weatherResponse ->
+            val weather = repo.getWeather(long, lat, appid, units,lang).collect { weatherResponse ->
                 _weatherList.value = weatherResponse
                 Log.d("homevm", "Weather: ${weatherResponse}")
 
@@ -36,10 +36,10 @@ class HomeViewModel(var repo:Repo): ViewModel() {
         }
     }
 
-    fun get3HourForecast(long: Double, lat: Double, appid: String, units: String) {
+    fun get3HourForecast(long: Double, lat: Double, appid: String, units: String,lang:String) {
         viewModelScope.launch(Dispatchers.IO) {
             val hourlyForecast =
-                repo.get3HoursForecast(long, lat, appid, units).collect { hourlyResponse ->
+                repo.get3HoursForecast(long, lat, appid, units,lang).collect { hourlyResponse ->
                     _hourlyForecastList.value = hourlyResponse
                     Log.d("homevm", "Weather: ${hourlyResponse}")
 
@@ -47,10 +47,10 @@ class HomeViewModel(var repo:Repo): ViewModel() {
         }
     }
 
-    fun getDailyForecast(long: Double, lat: Double, appid: String, units: String) {
+    fun getDailyForecast(long: Double, lat: Double, appid: String, units: String,lang:String) {
         viewModelScope.launch(Dispatchers.IO) {
             val hourlyForecast =
-                repo.getDayForecast(long, lat, appid, units).collect { dailyResponse ->
+                repo.getDayForecast(long, lat, appid, units,lang).collect { dailyResponse ->
                     _dailyForecastList.value = dailyResponse
                     Log.d("homevm", "Weather: ${dailyResponse}")
 

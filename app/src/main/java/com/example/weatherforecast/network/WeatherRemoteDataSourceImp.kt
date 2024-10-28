@@ -30,9 +30,9 @@ class WeatherRemoteDataSourceImp(var apiService: ApiService) : WeatherRemoteData
 //    ): Flow<Response<ForecastModel>> =
 //        flow { emit(apiService.getForecast(lat, lon, lang,appid)) }
 
-    override suspend fun getWeather(lon: Double, lat: Double, apid: String,units:String): Flow<WeatherResponse> {
+    override suspend fun getWeather(lon: Double, lat: Double, apid: String,units:String,lang:String): Flow<WeatherResponse> {
        return flow {
-            emit(apiService.getWeather(lat,lon,apid,units))
+            emit(apiService.getWeather(lat,lon,apid,units,lang))
         }
     }
 
@@ -40,10 +40,11 @@ class WeatherRemoteDataSourceImp(var apiService: ApiService) : WeatherRemoteData
         lon: Double,
         lat: Double,
         apid: String,
-        units: String
+        units: String,
+        lang:String
     ): Flow<ForecastResponse> {
         return flow{
-            emit(apiService.getForecast(lat,lon,apid,units))
+            emit(apiService.getForecast(lat,lon,apid,units,lang))
         }
     }
 

@@ -32,18 +32,20 @@ class Repo(private val remoteDataSource: WeatherRemoteDataSource ,private val lo
         long: Double,
         lat: Double,
         appid: String,
-        units:String
+        units:String,
+        lang:String
     ): Flow<WeatherResponse> {
-        return remoteDataSource.getWeather(long,lat,appid,units)
+        return remoteDataSource.getWeather(long,lat,appid,units,lang)
     }
 
     override suspend fun get3HoursForecast(
         long: Double,
         lat: Double,
         appid: String,
-        units: String
+        units: String,
+        lang:String
     ): Flow<List<Forecast>> {
-        return remoteDataSource.getForecast(long,lat,appid,units).map { forecastResponse ->
+        return remoteDataSource.getForecast(long,lat,appid,units,lang).map { forecastResponse ->
             // Extract and return the list of 3-hour forecast
             forecastResponse.list
         }
@@ -53,9 +55,10 @@ class Repo(private val remoteDataSource: WeatherRemoteDataSource ,private val lo
         long: Double,
         lat: Double,
         appid: String,
-        units: String
+        units: String,
+        lang:String
     ): Flow<List<Forecast>> {
-        return remoteDataSource.getForecast(long,lat,appid,units).map { forecastResponse ->
+        return remoteDataSource.getForecast(long,lat,appid,units,lang).map { forecastResponse ->
             // Group by day and calculate daily temperatures
             forecastResponse.list.groupBy { it.dt / 86400 } // Group by day (86400 seconds = 1 day)
                 .map { entry -> entry.value.first() } // For simplicity, taking the first forecast of each day

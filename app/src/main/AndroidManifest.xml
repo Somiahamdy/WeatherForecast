@@ -33,7 +33,7 @@
             android:exported="false"
             android:theme="@style/Theme.WeatherForecast" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".settings.view.SettingsActivity"
             android:exported="false" />
         <activity
             android:name=".AlertActivity"

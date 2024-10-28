@@ -24,6 +24,10 @@
     <style name="text_withe_bold_60" parent="text_withe_bold">
         <item name="android:textSize">60sp</item>
     </style>
+    <style name="ToolbarTitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 
 
 </resources>
