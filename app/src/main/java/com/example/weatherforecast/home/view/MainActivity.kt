@@ -32,7 +32,6 @@ import com.example.weatherforecast.SettingsActivity
 import com.example.weatherforecast.db.WeatherLocalDataSource
 import com.example.weatherforecast.db.WeatherLocalDataSourceImp
 import com.example.weatherforecast.home.viewmodel.HomeViewModel
-import com.example.weatherforecast.home.viewmodel.HomeViewModelFactory
 import com.example.weatherforecast.model.Forecast
 import com.example.weatherforecast.model.Repo.Repo
 import com.example.weatherforecast.network.RetrofitHelper
