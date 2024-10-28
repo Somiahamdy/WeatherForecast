@@ -1,4 +1,4 @@
-package com.example.weatherforecast
+package com.example.weatherforecast.map.view
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 import android.app.Activity
 import android.content.Intent
+import com.example.weatherforecast.R
 import org.osmdroid.api.IMapController
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
