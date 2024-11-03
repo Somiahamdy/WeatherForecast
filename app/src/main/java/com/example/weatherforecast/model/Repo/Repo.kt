@@ -1,8 +1,11 @@
 package com.example.weatherforecast.model.Repo
 
 import com.example.weatherforecast.db.WeatherLocalDataSource
+import com.example.weatherforecast.model.AlarmRoom
 import com.example.weatherforecast.model.Forecast
+import com.example.weatherforecast.model.Weather
 import com.example.weatherforecast.model.WeatherResponse
+import com.example.weatherforecast.model.WeatherRoom
 import com.example.weatherforecast.network.WeatherRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -64,4 +67,29 @@ class Repo(private val remoteDataSource: WeatherRemoteDataSource ,private val lo
                 .map { entry -> entry.value.first() } // For simplicity, taking the first forecast of each day
         }
     }
+
+    override suspend fun getAllFavWeather(): Flow<List<WeatherRoom>> {
+         return  localDataSource.getAllFavWeather()
+    }
+
+    override suspend fun insertWeatherToFav(weather:WeatherRoom) {
+        localDataSource.insertWeather(weather)
+    }
+
+    override suspend fun deleteWeatherFromFav(weather:WeatherRoom) {
+        localDataSource.deleteWeather(weather)
+    }
+
+    override suspend fun addAlarm(alarmRoom: AlarmRoom) {
+        localDataSource.insertAlarm(alarmRoom)
+    }
+
+    override suspend fun removeAlarm(alarmRoom: AlarmRoom) {
+        localDataSource.deleteAlarm(alarmRoom)
+    }
+
+    override fun getAllAlarms(): Flow<List<AlarmRoom>> {
+         return localDataSource.getAllAlarms()
+    }
+
 }

@@ -48,10 +48,11 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    //implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.gms:play-services-location:21.2.0")
     implementation("androidx.test.ext:junit-ktx:1.1.5")
     implementation(libs.androidx.activity)
+    implementation(libs.androidx.compiler)
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -92,9 +93,7 @@ dependencies {
     //shimmer
     implementation("com.facebook.shimmer:shimmer:0.5.0")
 
-    //navigation host
-    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.3")
-    implementation ("androidx.navigation:navigation-ui-ktx:2.7.3")
+
 
 
     testImplementation("androidx.test:core-ktx:1.5.0")
@@ -105,12 +104,15 @@ dependencies {
     testImplementation("androidx.arch.core:core-testing:2.2.0")
 
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
+
     testImplementation("app.cash.turbine:turbine:0.5.1")
 
-    implementation ("com.google.android.gms:play-services-maps:18.0.2")
+    //implementation ("com.google.android.gms:play-services-maps:18.0.2")
     implementation ("org.osmdroid:osmdroid-android:6.1.10")
+
+    implementation("com.google.guava:guava:31.1-android")
+
+
 
 
 

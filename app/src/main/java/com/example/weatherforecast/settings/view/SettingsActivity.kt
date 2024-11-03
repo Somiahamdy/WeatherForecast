@@ -2,16 +2,12 @@ package com.example.weatherforecast.settings.view
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
-import android.graphics.Typeface
 import android.os.Bundle
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.weatherforecast.R
 
 class SettingsActivity : AppCompatActivity(),onSettingsClickListener {
@@ -26,7 +22,7 @@ class SettingsActivity : AppCompatActivity(),onSettingsClickListener {
         enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
         // Set up the Toolbar
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        val toolbar: Toolbar = findViewById(R.id.favtoolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.apply {
             title = "Settings" // Set the title of the page here

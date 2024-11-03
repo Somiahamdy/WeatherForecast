@@ -1,5 +1,9 @@
 package com.example.weatherforecast.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import java.time.temporal.Temporal
+
 
 data class Clouds (
     var all: Int
@@ -9,6 +13,7 @@ data class Coord (
     var lon: Double ,
     var lat: Double
 )
+
 
 
 
@@ -42,6 +47,7 @@ data class WeatherResponse (
     var dt: Int ,
     var sys: Sys? ,
     var timezone: Int ,
+    @PrimaryKey(autoGenerate = true)
     var id: Int ,
     var name: String? ,
     var cod: Int

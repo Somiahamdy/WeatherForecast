@@ -25,10 +25,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherforecast.AlertActivity
-import com.example.weatherforecast.FavouriteActivity
+import com.example.weatherforecast.alert.view.AlertActivity
+import com.example.weatherforecast.favourites.view.FavouriteActivity
 import com.example.weatherforecast.map.view.MapsActivity
 import com.example.weatherforecast.R
+import com.example.weatherforecast.db.AppDatabase
 import com.example.weatherforecast.settings.view.SettingsActivity
 import com.example.weatherforecast.db.WeatherLocalDataSource
 import com.example.weatherforecast.db.WeatherLocalDataSourceImp
@@ -105,6 +106,8 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         apiKey="0f121088b1919d00bf3ffec84d4357f9"
+        long=intent.getDoubleExtra("long",0.0)
+        lat=intent.getDoubleExtra("lat",0.0)
 
         //Init UI
         weatherCity=findViewById(R.id.tv_zone)
@@ -126,7 +129,8 @@ class MainActivity : AppCompatActivity() {
 
         //view model Init
         remoteDataSource=WeatherRemoteDataSourceImp.getInstance(RetrofitHelper.service)
-        localDataSource=WeatherLocalDataSourceImp.getInstance()
+        val weatherDao = AppDatabase.getDatabase(applicationContext)
+        localDataSource=WeatherLocalDataSourceImp.getInstance(this)
         repo= Repo.getInstance(remoteDataSource,localDataSource)!!
         homeViewModelFactory = HomeViewModelFactory(repo)
         homeViewModel = ViewModelProvider(this ,homeViewModelFactory ).get(HomeViewModel::class.java)
@@ -281,6 +285,12 @@ class MainActivity : AppCompatActivity() {
                     long = location.lastLocation?.longitude!!
                     lat = location.lastLocation?.latitude!!
                     fetchAndUpdateData()
+                    var alertsharedPref :SharedPreferences= getSharedPreferences("alertsSharedPref", MODE_PRIVATE)
+                    val editor = alertsharedPref.edit()
+                    editor.putLong("long",long.toLong())
+                    editor.putLong("lat",lat.toLong())
+                    editor.apply()
+
                 }
 
             },
