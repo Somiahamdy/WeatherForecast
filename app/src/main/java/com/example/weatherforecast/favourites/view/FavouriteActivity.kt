@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -29,7 +30,7 @@ import com.example.weatherforecast.network.WeatherRemoteDataSourceImp
 
 class FavouriteActivity : AppCompatActivity(), onFavClickListener {
     private var REQUEST_LOCATION_CODE=7007
-    private lateinit var addToFav: ImageButton
+    private lateinit var addToFav: ImageView
     private lateinit var remoteDataSource: WeatherRemoteDataSource
     private lateinit var localDataSource: WeatherLocalDataSource
     private lateinit var favViewModelFactory: FavViewModelFactory

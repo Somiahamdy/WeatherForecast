@@ -20,18 +20,21 @@
 
     <ImageView
         android:id="@+id/addalarm"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/alerttoolbar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/baseline_notification_add_24" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/alertrv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addalarm" />
+        app:layout_constraintTop_toBottomOf="@+id/alerttoolbar" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

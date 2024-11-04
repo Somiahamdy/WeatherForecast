@@ -6,6 +6,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.example.weatherforecast.model.Forecast
 import com.example.weatherforecast.model.Repo.Repo
+import com.example.weatherforecast.model.Repo.RepoInterface
 import com.example.weatherforecast.model.WeatherResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
-class HomeViewModel(var repo:Repo): ViewModel() {
+class HomeViewModel(var repo:RepoInterface): ViewModel() {
 
     val _weatherList = MutableStateFlow<WeatherResponse?>(null)
     val weatherList: StateFlow<WeatherResponse?> = _weatherList

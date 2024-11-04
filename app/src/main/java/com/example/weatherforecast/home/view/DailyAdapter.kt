@@ -1,6 +1,8 @@
 package com.example.weatherforecast.home.view
 
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +27,6 @@ class DailyAdapter: ListAdapter<Forecast,DailyAdapter.ViewHolder>(DailyDiffUtil(
         val dweatherdes:TextView=item.findViewById(R.id.tv_des)
         val dweathertemp:TextView=item.findViewById(R.id.tv_temp)
 
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -38,6 +39,8 @@ class DailyAdapter: ListAdapter<Forecast,DailyAdapter.ViewHolder>(DailyDiffUtil(
         var currentDayWeather=getItem(position)
         var date= Date(currentDayWeather.dt.toLong()*1000)
         val dayFormat = SimpleDateFormat("EEEE", Locale.getDefault())
+        var unit:String=""
+
         val formattedDay = dayFormat.format(date)
         if(position==0){
             holder.dayName.text="Today"

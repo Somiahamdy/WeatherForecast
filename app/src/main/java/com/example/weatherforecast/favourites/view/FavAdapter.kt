@@ -25,7 +25,7 @@ class FavAdapter(val listner:onFavClickListener) :  ListAdapter<WeatherRoom, Fav
         val name: TextView =item.findViewById(R.id.tv_zone)
         val dweatherimg: ImageView =item.findViewById(R.id.iv_icon)
         val dweatherdes: TextView =item.findViewById(R.id.tv_des)
-        val remove:ImageButton=item.findViewById(R.id.removefavbtn)
+        val remove:ImageView=item.findViewById(R.id.removebtn)
         val weatherCard:CardView=item.findViewById(R.id.favcv)
 
     }
