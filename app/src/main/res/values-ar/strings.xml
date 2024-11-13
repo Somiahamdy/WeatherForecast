@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <string name="home">الصفحة الرئيسية</string>
+    <string name="fav">المفضلة</string>
+    <string name="alert">التنبيهات</string>
+    <string name="settings">إعدادات</string>
+    <string name="wind">رياح</string>
+    <string name="humidity">رطوبة</string>
+    <string name="pressure">ضغط</string>
+    <string name="uv">الأشعة فوق البنفسجية</string>
+    <string name="cloudiness">الغيوم</string>
+    <string name="wind_direction">اتجاه الرياح</string>
+    <string name="no_alarms_yet">No Alarms Yet!</string>
+
+</resources>
