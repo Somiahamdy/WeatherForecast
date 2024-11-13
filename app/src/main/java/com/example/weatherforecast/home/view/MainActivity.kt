@@ -135,22 +135,8 @@ class MainActivity : AppCompatActivity() {
         homeViewModelFactory = HomeViewModelFactory(repo)
         homeViewModel = ViewModelProvider(this ,homeViewModelFactory ).get(HomeViewModel::class.java)
 
-        //adapters Init
-        hourlyAdapter= HourlyAdapter()
-        dailyAdapter= DailyAdapter()
-
-        //recycler view Init
         dailyLayoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         hourlyLayoutManager= LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-
-        dailyRecyclerView.apply{
-            adapter=dailyAdapter
-            layoutManager=dailyLayoutManager
-        }
-        hourlyRecyclerView.apply {
-            adapter=hourlyAdapter
-            layoutManager=hourlyLayoutManager
-        }
 
         //on map clicked listener
         locationimg.setOnClickListener {
@@ -206,6 +192,16 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         loadSettings()
+        hourlyAdapter= HourlyAdapter(tempUnit)
+        dailyAdapter= DailyAdapter(tempUnit)
+        dailyRecyclerView.apply{
+            adapter=dailyAdapter
+            layoutManager=dailyLayoutManager
+        }
+        hourlyRecyclerView.apply {
+            adapter=hourlyAdapter
+            layoutManager=hourlyLayoutManager
+        }
         checkOnSettings()
         fetchAndUpdateData()
     }

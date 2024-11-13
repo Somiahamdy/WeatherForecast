@@ -19,7 +19,7 @@ import java.util.Locale
 import java.util.TimeZone
 
 
-class HourlyAdapter: ListAdapter<Forecast, HourlyAdapter.ViewHolder>(HourlyDiffUtil()) {
+class HourlyAdapter(var unit:String): ListAdapter<Forecast, HourlyAdapter.ViewHolder>(HourlyDiffUtil()) {
     class ViewHolder(private val item: View) : RecyclerView.ViewHolder(item) {
         val htime:TextView=item.findViewById(R.id.tv_time)
         val hweatherimg:ImageView=item.findViewById(R.id.iv_weather)
@@ -36,7 +36,7 @@ class HourlyAdapter: ListAdapter<Forecast, HourlyAdapter.ViewHolder>(HourlyDiffU
         val currentForecast=getItem(position)
         holder.htime.text= unixTimeToReadableDate(currentForecast.dt.toLong())
         holder.hweatherimg.setImageResource(getIconRes(currentForecast.weather?.get(0)?.icon))
-        holder.htemp.text= currentForecast.main?.temp?.toInt().toString().plus("°C")
+        holder.htemp.text= currentForecast.main?.temp?.toInt().toString().plus(unit)
 
     }
     private fun unixTimeToReadableDate(unixTime: Long): String {

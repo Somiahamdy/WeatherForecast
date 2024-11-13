@@ -4,6 +4,7 @@ import com.example.weatherforecast.db.FakeWeatherLocalDataSourceImp
 import com.example.weatherforecast.network.FakeWeatherRemoteDataSourceImp
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -25,7 +26,7 @@ class RepoTest {
     }
 
     @Test
-    fun getWeather_withMetricUnit_returnsCelsiusTemperature() = runBlocking {
+    fun getWeather_withMetricUnit_returnsCelsiusTemperature() = runTest() {
 
         val lat = 12.0
         val lon = 12.0
@@ -38,11 +39,11 @@ class RepoTest {
 
         assertNotNull(weatherResponse)
 
-        Assert.assertTrue(weatherResponse.first().main!!.temp > -273.15) // Celsius should be above absolute zero
+        assertTrue(weatherResponse.first().main!!.temp > -273.15) // Celsius should be above absolute zero
     }
 
     @Test
-    fun get3HoursForecast_returnsListOfForecasts() = runBlocking {
+    fun get3HoursForecast_returnsListOfForecasts() = runTest {
         // Arrange
         val lat = 12.0
         val lon = 12.0

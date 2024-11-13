@@ -8,6 +8,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.weatherforecast.model.WeatherRoom
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -34,7 +35,7 @@ class WeatherDaoTest {
     }
 
     @Test
-    fun insertAndGetAllFavWeather() = runBlocking {
+    fun insertAndGetAllFavWeather() = runTest {
         val weatherRoom = WeatherRoom(12.0, 12.0, "cairo", 12.0, 20.0,"clear sky","")
         weatherDao.insertWeather(weatherRoom)
 
@@ -45,7 +46,7 @@ class WeatherDaoTest {
     }
 
     @Test
-    fun deleteWeather() = runBlocking {
+    fun deleteWeather() = runTest {
         val weatherRoom = WeatherRoom(12.0, 12.0, "cairo", 12.0, 20.0,"clear sky","")
         weatherDao.insertWeather(weatherRoom)
         weatherDao.deleteWeather(weatherRoom)

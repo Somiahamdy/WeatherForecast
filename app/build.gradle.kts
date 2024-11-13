@@ -114,6 +114,10 @@ dependencies {
     implementation ("org.osmdroid:osmdroid-android:6.1.10")
 
     implementation("com.google.guava:guava:31.1-android")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+    testImplementation ("androidx.arch.core:core-testing:2.1.0") // For LiveData testing
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
 
 
 

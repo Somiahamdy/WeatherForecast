@@ -20,7 +20,7 @@ import java.util.Locale
 //import com.example.weatherforecast.model.Daily
 
 
-class DailyAdapter: ListAdapter<Forecast,DailyAdapter.ViewHolder>(DailyDiffUtil()) {
+class DailyAdapter(var unit:String): ListAdapter<Forecast,DailyAdapter.ViewHolder>(DailyDiffUtil()) {
     class ViewHolder(private val item: View) : RecyclerView.ViewHolder(item) {
         val dayName:TextView=item.findViewById(R.id.tv_day)
         val dweatherimg:ImageView=item.findViewById(R.id.iv_weather)
@@ -39,7 +39,7 @@ class DailyAdapter: ListAdapter<Forecast,DailyAdapter.ViewHolder>(DailyDiffUtil(
         var currentDayWeather=getItem(position)
         var date= Date(currentDayWeather.dt.toLong()*1000)
         val dayFormat = SimpleDateFormat("EEEE", Locale.getDefault())
-        var unit:String=""
+
 
         val formattedDay = dayFormat.format(date)
         if(position==0){
@@ -49,8 +49,8 @@ class DailyAdapter: ListAdapter<Forecast,DailyAdapter.ViewHolder>(DailyDiffUtil(
         }
         holder.dweatherimg.setImageResource(getIconRes(currentDayWeather.weather?.get(0)?.icon))
         holder.dweatherdes.text= currentDayWeather.weather?.get(0)?.description
-        holder.dweathertemp.text= currentDayWeather.main?.temp_max?.toInt().toString().plus("°C").plus(" / ")
-            .plus(currentDayWeather.main?.temp_min?.toInt().toString()).plus("°C")
+        holder.dweathertemp.text= currentDayWeather.main?.temp_max?.toInt().toString().plus(unit).plus(" / ")
+            .plus(currentDayWeather.main?.temp_min?.toInt().toString()).plus(unit)
     }
     fun getIconRes(icon: String?) = when (icon) {
         "01n" -> R.drawable.ic_01n
